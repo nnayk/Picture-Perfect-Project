@@ -16,9 +16,9 @@
       - openAI can host image URLs
   
 
-**Programs:**
-Backend - Python Flask
-Frontend - React via next.js
+**Programs:** 
+Python Flask (Backend) 
+React via next.js (Frontend)
 
 
 
