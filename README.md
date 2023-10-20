@@ -17,7 +17,7 @@
   
 
 **Programs:** 
-Python Flask (Backend) 
+Python Flask (Backend), 
 React via next.js (Frontend)
 
 
