@@ -1,18 +1,20 @@
 # 307-project
 
-Project Votes:
-- HACK FOR IMPACT
-- Todo List
 
 **Considerations**
 - User Auth
+- Interface
+      - sign in
+      - user portfolio
+      - image generating (on users own portfolio)
+      - voting
+      - leaderboard (best creator/image)
 - API cost
-      - estimate cost
+      - estimate cost for Klingenberg to cover
 - Image storage
       - use urls for faster loading speed
-      - openAI can host image urls
+      - openAI can host image URLs
   
-
 
 **Programs:**
 Backend - Python Flask
