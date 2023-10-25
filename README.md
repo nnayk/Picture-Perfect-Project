@@ -1,6 +1,5 @@
 # Picture Perfect Project
 
-
 **Considerations**
 - User Auth
 - Interface
