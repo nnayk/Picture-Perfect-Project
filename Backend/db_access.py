@@ -3,6 +3,7 @@ from mongoengine import connect, Document, StringField
 
 app = Flask(__name__)
 
+# MongoDB connection
 connect(db='dbPicturePerfect', host='localhost', port=27017)
 
 class User(Document):
@@ -10,7 +11,17 @@ class User(Document):
     password = StringField(required=True)
     name = StringField(required=True)
 
-    meta = {'collection': 'users'}
+    meta = {'collection': 'users'}  # Explicitly setting the collection name to 'users'
+
+class Image(Document): 
+    prompt = StringField(required=True)
+    url = StringField(required=True)
+
+    meta = {'collection': 'images'}  # Explicitly setting the collection name to 'images'
+
+
+
+
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
@@ -25,15 +36,41 @@ def create_user():
 
     return jsonify({"message": "User created successfully!", "user_id": str(user.id)}), 201
 
+@app.route('/create_image', methods=['POST'])  
+def create_image():
+    data = request.get_json()
+
+    image = Image(
+        prompt=data['prompt'],
+        url=data['url']
+    )
+    image.save()
+
+    return jsonify({"message": "Image data added successfully!", "image_id": str(image.id)}), 201
+
+
+
 @app.route('/users')
 def get_users():
     users = User.objects.all()
-    print(users)
     return jsonify([{
         'username': user.username,
         'name': user.name,
-        'id': str(user.id)
+        'user_id': str(user.id) 
     } for user in users])
+
+
+@app.route('/images')
+def get_images():
+    images = Image.objects.all()
+    return jsonify([{
+        'prompt': image.prompt,
+        'url': image.url,
+        'image_id': str(image.id)  
+    } for image in images])
+
+
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)
