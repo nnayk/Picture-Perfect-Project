@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import React, { useState } from 'react';
 
 export default function Home() {
@@ -32,21 +31,23 @@ export default function Home() {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className="bg-gray-100 min-h-screen flex flex-col justify-center items-center">
+      <form onSubmit={handleSubmit} className="p-8 bg-white shadow-lg rounded-lg">
         <input
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Enter some text"
+          className="border border-gray-300 p-2 rounded w-full mb-4"
         />
-        <button type="submit">Submit</button>
+        <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          Submit
+        </button>
       </form>
 
       {url && (
-        <div>
-          <img src={url} alt="Generated from input" />
-
+        <div className="mt-8">
+          <img className="rounded-lg shadow" src={url} alt="Generated from input" />
         </div>
       )}
     </div>
