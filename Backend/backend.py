@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
+import requests
 
 app = Flask(__name__)
+
+DB_ACCESS_URL = "http://127.0.0.1:5001"  # This is where db_access.py is running.
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -16,5 +19,38 @@ def submit():
     print(text)
     return jsonify({'message': 'Text logged successfully!'})
 
+
+
+@app.route('/create_user', methods=['POST'])
+def submit():
+    #print("BACKEND")
+    data = request.get_json()
+    user = data['username_input']
+    password = data['password_input']
+    name = data['name_input']
+
+    user_data = {
+        'username': user,
+        'password': password,
+        'name': name
+    }
+    response = requests.post(f"{DB_ACCESS_URL}/create_user", json=user_data)
+    
+    if response.status_code == 201:
+        print("User created successfully!")
+        return jsonify({'message': 'User logged successfully!'})
+    elif response.status_code == 400:
+        print("Duplicate username, please choose another")
+        return jsonify({'message': 'Duplicate username, please choose another!'})
+    else:
+        print("Failed to create user!")
+        return jsonify({'message': 'Failed to create user!!'})
+
+    
+    
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    try:
+        app.run(port=5000, debug=True)
+    except OSError as e:
+        print(f"Error: {e}. Is port 5000 already in use?")
