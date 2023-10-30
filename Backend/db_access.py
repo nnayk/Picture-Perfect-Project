@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from mongoengine import connect, Document, StringField
+from mongoengine import connect, Document, StringField, IntField, ReferenceField, NotUniqueError
 
 app = Flask(__name__)
 
@@ -8,16 +8,19 @@ connect(db='dbPicturePerfect', host='localhost', port=27017)
 
 class User(Document):
     username = StringField(required=True, unique=True)
-    password = StringField(required=True)
     name = StringField(required=True)
+    encrypted_password = StringField(required=True) # Assuming you're storing it as a String for now
+    ranking = IntField()
 
-    meta = {'collection': 'users'}  # Explicitly setting the collection name to 'users'
+    meta = {'collection': 'users'}
 
 class Image(Document): 
-    prompt = StringField(required=True)
+    creator = ReferenceField(User, required=True)
     url = StringField(required=True)
+    prompt = StringField(required=True)
+    votes = IntField(default=0)
 
-    meta = {'collection': 'images'}  # Explicitly setting the collection name to 'images'
+    meta = {'collection': 'images'}
 
 
 
@@ -28,25 +31,35 @@ def create_user():
 
     user = User(
         username=data['username'],
-        password=data['password'],  
+        encrypted_password=data['password'],  
         name=data['name']
     )
-    user.save()
-
-    return jsonify({"message": "User created successfully!", "user_id": str(user.id)}), 201
+    try:
+        user.save()
+        return jsonify({"message": "User created successfully!", "user_id": str(user.id)}), 201
+    except NotUniqueError:
+        return jsonify({"error": "Username already exists. Choose another."}), 400
 
 
 @app.route('/create_image', methods=['POST'])  
 def create_image():
+    
     data = request.get_json()
 
+    # Retrieve the user by ObjectId
+    creator = User.objects.get(id=data['creator'])
+    
+    # Associate the image with the user and save it
     image = Image(
+        creator=creator,
         prompt=data['prompt'],
         url=data['url']
     )
     image.save()
 
     return jsonify({"message": "Image data added successfully!", "image_id": str(image.id)}), 201
+
+
 
 
 @app.route('/users')
@@ -58,13 +71,14 @@ def get_users():
         'user_id': str(user.id) 
     } for user in users])
 
-
 @app.route('/images')
 def get_images():
     images = Image.objects.all()
     return jsonify([{
+        'creator_id': str(image.creator.id),  # updated from user to creator
         'prompt': image.prompt,
         'url': image.url,
+        'votes': image.votes,
         'image_id': str(image.id)  
     } for image in images])
 
