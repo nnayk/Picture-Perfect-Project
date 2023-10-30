@@ -22,7 +22,6 @@ class Image(Document):
 
 
 
-
 @app.route('/create_user', methods=['POST'])
 def create_user():
     data = request.get_json()
@@ -36,6 +35,7 @@ def create_user():
 
     return jsonify({"message": "User created successfully!", "user_id": str(user.id)}), 201
 
+
 @app.route('/create_image', methods=['POST'])  
 def create_image():
     data = request.get_json()
@@ -47,7 +47,6 @@ def create_image():
     image.save()
 
     return jsonify({"message": "Image data added successfully!", "image_id": str(image.id)}), 201
-
 
 
 @app.route('/users')
