@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify
 import requests
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config["CORS_HEADERS"] = "Content-Type"
 
 DB_ACCESS_URL = "http://127.0.0.1:5001"  # This is where db_access.py is running.
 
@@ -25,6 +28,13 @@ def submit():
 def register():
     print("received register request")
     print(request.json())
+    return jsonify({"message": "Registered successfully!"})
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    print("received login request")
+    print(request)
     return jsonify({"message": "Registered successfully!"})
 
 
