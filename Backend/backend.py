@@ -27,15 +27,15 @@ def submit():
 @app.route("/register", methods=["POST"])
 def register():
     print("received register request")
-    print(request.json())
+    print(request, request.data)
     return jsonify({"message": "Registered successfully!"})
 
 
 @app.route("/login", methods=["POST"])
 def login():
     print("received login request")
-    print(request)
-    return jsonify({"message": "Registered successfully!"})
+    print(request, request.data)
+    return jsonify({"message": "Logged in successfully!"})
 
 
 @app.route("/create_user", methods=["POST"])
