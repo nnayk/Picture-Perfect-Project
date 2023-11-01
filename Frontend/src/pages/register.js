@@ -2,8 +2,10 @@
 import React, { useState } from "react";
 // pages/register.js
 import "tailwindcss/tailwind.css"; // Import Tailwind CSS
+import { useRouter } from "next/router";
 
 const Register = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -48,6 +50,8 @@ const Register = () => {
       errors.password = "Password does not meet the required criteria.";
       console.log("bad password");
     }
+
+    router.push("/");
   };
 
   return (
