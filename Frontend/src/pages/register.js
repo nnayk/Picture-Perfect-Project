@@ -59,12 +59,12 @@ const Register = () => {
         formData
       );
       console.log("response", response);
+      router.push("/");
       return response;
     } catch (error) {
       console.log(error);
       return false;
     }
-    router.push("/");
   };
 
   return (
