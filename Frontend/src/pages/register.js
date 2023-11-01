@@ -40,12 +40,13 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle registration logic here
-    console.log(formData);
+    // console.log(formData);
     const { password, confirmPassword } = formData;
     const errors = {};
 
     if (!isPasswordValid(password)) {
       errors.password = "Password does not meet the required criteria.";
+      console.log("bad password");
     }
   };
 
