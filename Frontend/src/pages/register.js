@@ -1,5 +1,6 @@
 // pages/register.js
 import React, { useState } from "react";
+import axios from "axios";
 // pages/register.js
 import "tailwindcss/tailwind.css"; // Import Tailwind CSS
 import { useRouter } from "next/router";
@@ -39,7 +40,7 @@ const Register = () => {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Handle registration logic here
     // console.log(formData);
@@ -50,7 +51,18 @@ const Register = () => {
       errors.password = "Password does not meet the required criteria.";
       console.log("bad password");
     }
-
+    try {
+      console.log("try");
+      const response = await axios.post(
+        "http://localhost:5000/register",
+        formData
+      );
+      console.log("response", response);
+      return response;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
     router.push("/");
   };
 
