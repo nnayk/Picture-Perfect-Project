@@ -22,7 +22,7 @@ def submit():
 
 
 @app.route('/create_user', methods=['POST'])
-def submit():
+def create_user():
     #print("BACKEND")
     data = request.get_json()
     user = data['username_input']
