@@ -2,6 +2,13 @@ from flask import Flask, request, jsonify
 import requests
 from flask_cors import CORS, cross_origin
 
+from mongoengine import connect, Document, StringField, DoesNotExist
+from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash
+import secrets  # For generating a session key
+
+from db_access import User
+
 app = Flask(__name__)
 cors = CORS(app)
 app.config["CORS_HEADERS"] = "Content-Type"
@@ -33,22 +40,55 @@ def register():
 
 @app.route("/login", methods=["POST"])
 def login():
-    print("received login request")
-    print(request, request.data)
-    return jsonify({"message": "Logged in successfully!"})
+    data = request.get_json()
+
+    try:
+        # Authenticate the user
+        user = User.objects.get(username=data['username'])
+        
+        # Verify password (assuming passwords are hashed before storing)
+        if check_password_hash(user.encrypted_password, data['password']):
+            # Generate session key/token
+            session_key = secrets.token_hex(16)  # This is just a placeholder for an actual session key/token
+            # You would store this session key in a session store or database
+            # with a reference to the user and a valid time period
+            
+            # Return success response with session key
+            return jsonify({"message": "Logged in successfully!", "session_key": session_key}), 200
+        else:
+            # Incorrect password
+            return jsonify({"message": "Login failed, incorrect username or password"}), 401
+    except DoesNotExist:
+        # Username does not exist
+        return jsonify({"message": "Login failed, incorrect username or password"}), 401
+    except KeyError:
+        # Username or password not provided
+        return jsonify({"message": "Login failed, must provide username and password"}), 400
+    except Exception as e:
+        # Catch any other errors
+        return jsonify({"message": str(e)}), 500
+
+
 
 
 @app.route("/create_user", methods=["POST"])
 def create_user():
-    # print("BACKEND")
+    #print("BACKEND")
     data = request.get_json()
-    user = data["username_input"]
-    password = data["password_input"]
-    name = data["name_input"]
+    username = data["username"]
+    plain_text_password = data["password"]
+    name = data["name"]
 
-    user_data = {"username": user, "password": password, "name": name}
+    # Hash the password
+    hashed_password = generate_password_hash(plain_text_password, method='sha256')
+
+    # Prepare the user data with the hashed password
+    user_data = {"username": username, "password": hashed_password, "name": name}
+
+    # Send the user data with the hashed password to the database access layer
     response = requests.post(f"{DB_ACCESS_URL}/create_user", json=user_data)
 
+    # Handle the response from the database access layer
     if response.status_code == 201:
         print("User created successfully!")
         return jsonify({"message": "User logged successfully!"})
@@ -58,6 +98,8 @@ def create_user():
     else:
         print("Failed to create user!")
         return jsonify({"message": "Failed to create user!!"})
+
+
 
 
 if __name__ == "__main__":
