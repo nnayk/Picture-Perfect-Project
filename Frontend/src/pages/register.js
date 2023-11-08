@@ -1,10 +1,7 @@
-// pages/register.js
 import React, { useState } from "react";
 import axios from "axios";
-// pages/register.js
 import "tailwindcss/tailwind.css"; // Import Tailwind CSS
 import { useRouter } from "next/router";
-import Link from "next/link"; // Import Link from Next.js
 
 const Register = () => {
   const router = useRouter();
@@ -23,8 +20,12 @@ const Register = () => {
     });
   };
 
-  const [error, setError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [pwdError, setPwdError] = useState("");
+  const [confirmPwdError, setConfirmPwdError] = useState("");
 
+  /* Password validation function */
   const isPasswordValid = (password) => {
     // Define regular expressions for password rules
     const minLengthRegex = /(?=.{10,})/;
@@ -32,8 +33,6 @@ const Register = () => {
     const lowercaseRegex = /(?=.*[a-z])/;
     const numberRegex = /(?=.*\d)/;
     const specialCharRegex = /(?=.*\W)/;
-
-    // Check if the password meets all criteria
     return (
       minLengthRegex.test(password) &&
       uppercaseRegex.test(password) &&
@@ -42,26 +41,52 @@ const Register = () => {
       specialCharRegex.test(password)
     );
   };
+
+  /* Username validation function */
+  // TODO: check that username is unique
+  const isValidUsername = (username) => {
+    return username.length > 0;
+  };
+
+  /* Email validation function */
   const isValidEmail = (email) => {
-    // You can use a regular expression or a library like validator.js for more comprehensive email validation.
     const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     return emailPattern.test(email);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isValidEmail(formData.email)) {
-      setError("Please enter a valid email address.");
-      return; // Prevent form submission
-    }
-    // Handle registration logic here
-    // console.log(formData);
     const { username, email, password, confirmPassword } = formData;
-    const errors = {};
-    if (!isPasswordValid(password)) {
-      errors.password = "Password does not meet the required criteria.";
-      console.log("bad password");
+    // Handle registration logic here
+    if (!isValidUsername(username)) {
+      setUsernameError("Please enter a valid username.");
+      return; // Prevent form submission
+    } else {
+      setUsernameError("");
     }
+    if (!isValidEmail(email)) {
+      setEmailError("Please enter a valid email address.");
+      console.log("2");
+      return; // Prevent form submission
+    } else {
+      setEmailError("");
+    }
+    if (!isPasswordValid(password)) {
+      setPwdError("Password does not meet the required criteria.");
+      console.log("3");
+      return;
+    } else {
+      setPwdError("");
+    }
+
+    if (password !== confirmPassword) {
+      console.log("4");
+      setConfirmPwdError("Passwords do not match.");
+      return;
+    } else {
+      setConfirmPwdError("");
+    }
+    /* make backend POST request to register user */
     try {
       console.log("try");
       const response = await axios.post(
@@ -93,6 +118,9 @@ const Register = () => {
               onChange={handleChange}
               className="w-full border rounded p-2"
             />
+            {usernameError && (
+              <p className="text-red-500 text-sm">{usernameError}</p>
+            )}
           </div>
           <div className="mb-4">
             <label className="block text-gray-600 text-sm font-medium">
@@ -105,8 +133,7 @@ const Register = () => {
               onChange={handleChange}
               className="w-full border rounded p-2"
             />
-            {/* Error message */}
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
           </div>
 
           <div className="mb-4">
@@ -120,6 +147,7 @@ const Register = () => {
               onChange={handleChange}
               className="w-full border rounded p-2"
             />
+            {pwdError && <p className="text-red-500 text-sm">{pwdError}</p>}
           </div>
 
           <div className="mb-4">
@@ -133,6 +161,9 @@ const Register = () => {
               onChange={handleChange}
               className="w-full border rounded p-2"
             />
+            {confirmPwdError && (
+              <p className="text-red-500 text-sm">{confirmPwdError}</p>
+            )}
           </div>
           <button
             type="submit"
