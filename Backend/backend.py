@@ -2,6 +2,13 @@ from flask import Flask, request, jsonify
 import requests
 from flask_cors import CORS, cross_origin
 
+from mongoengine import connect, Document, StringField, DoesNotExist
+from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash
+import secrets  # For generating a session key
+
+from db_access import User
+
 app = Flask(__name__)
 cors = CORS(app)
 app.config["CORS_HEADERS"] = "Content-Type"
@@ -35,15 +42,22 @@ def register():
 
 @app.route("/create_user", methods=["POST"])
 def create_user():
-    # print("BACKEND")
+    #print("BACKEND")
     data = request.get_json()
-    user = data["username_input"]
-    password = data["password_input"]
-    name = data["name_input"]
+    username = data["username"]
+    plain_text_password = data["password"]
+    name = data["name"]
 
-    user_data = {"username": user, "password": password, "name": name}
+    # Hash the password
+    hashed_password = generate_password_hash(plain_text_password, method='sha256')
+
+    # Prepare the user data with the hashed password
+    user_data = {"username": username, "password": hashed_password, "name": name}
+
+    # Send the user data with the hashed password to the database access layer
     response = requests.post(f"{DB_ACCESS_URL}/create_user", json=user_data)
 
+    # Handle the response from the database access layer
     if response.status_code == 201:
         print("User created successfully!")
         return jsonify({"message": "User logged successfully!"})
@@ -55,6 +69,8 @@ def create_user():
     else:
         print("Failed to create user!")
         return jsonify({"message": "Failed to create user!!"})
+
+
 
 
 if __name__ == "__main__":
