@@ -6,7 +6,9 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config["CORS_HEADERS"] = "Content-Type"
 
-DB_ACCESS_URL = "http://127.0.0.1:5001"  # This is where db_access.py is running.
+DB_ACCESS_URL = (
+    "http://127.0.0.1:5001"  # This is where db_access.py is running.
+)
 
 
 @app.route("/submit", methods=["POST"])
@@ -31,13 +33,6 @@ def register():
     return jsonify({"message": "Registered successfully!"})
 
 
-@app.route("/login", methods=["POST"])
-def login():
-    print("received login request")
-    print(request, request.data)
-    return jsonify({"message": "Logged in successfully!"})
-
-
 @app.route("/create_user", methods=["POST"])
 def create_user():
     # print("BACKEND")
@@ -54,7 +49,9 @@ def create_user():
         return jsonify({"message": "User logged successfully!"})
     elif response.status_code == 400:
         print("Duplicate username, please choose another")
-        return jsonify({"message": "Duplicate username, please choose another!"})
+        return jsonify(
+            {"message": "Duplicate username, please choose another!"}
+        )
     else:
         print("Failed to create user!")
         return jsonify({"message": "Failed to create user!!"})
