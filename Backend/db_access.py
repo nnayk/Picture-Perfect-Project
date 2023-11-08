@@ -1,6 +1,11 @@
 from flask import Flask, jsonify, request
 from mongoengine import connect, Document, StringField, IntField, ReferenceField, NotUniqueError
 
+from werkzeug.security import check_password_hash
+import secrets
+from mongoengine.errors import DoesNotExist
+
+
 app = Flask(__name__)
 
 # MongoDB connection
