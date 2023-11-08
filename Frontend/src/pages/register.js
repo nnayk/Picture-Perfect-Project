@@ -23,6 +23,8 @@ const Register = () => {
     });
   };
 
+  const [error, setError] = useState("");
+
   const isPasswordValid = (password) => {
     // Define regular expressions for password rules
     const minLengthRegex = /(?=.{10,})/;
@@ -40,14 +42,22 @@ const Register = () => {
       specialCharRegex.test(password)
     );
   };
+  const isValidEmail = (email) => {
+    // You can use a regular expression or a library like validator.js for more comprehensive email validation.
+    const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+    return emailPattern.test(email);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isValidEmail(formData.email)) {
+      setError("Please enter a valid email address.");
+      return; // Prevent form submission
+    }
     // Handle registration logic here
     // console.log(formData);
-    const { password, confirmPassword } = formData;
+    const { username, email, password, confirmPassword } = formData;
     const errors = {};
-
     if (!isPasswordValid(password)) {
       errors.password = "Password does not meet the required criteria.";
       console.log("bad password");
@@ -84,7 +94,6 @@ const Register = () => {
               className="w-full border rounded p-2"
             />
           </div>
-
           <div className="mb-4">
             <label className="block text-gray-600 text-sm font-medium">
               Email
@@ -96,6 +105,8 @@ const Register = () => {
               onChange={handleChange}
               className="w-full border rounded p-2"
             />
+            {/* Error message */}
+            {error && <p className="text-red-500 text-sm">{error}</p>}
           </div>
 
           <div className="mb-4">
@@ -123,7 +134,6 @@ const Register = () => {
               className="w-full border rounded p-2"
             />
           </div>
-
           <button
             type="submit"
             className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 transition duration-200; mb-4"
@@ -131,12 +141,6 @@ const Register = () => {
           >
             Register
           </button>
-          <p className="text-gray-600 text-sm">
-            Already have an account?{" "}
-            <a href="/login" className="text-blue-500 hover:underline">
-              Log in
-            </a>
-          </p>
         </form>
       </div>
     </div>
