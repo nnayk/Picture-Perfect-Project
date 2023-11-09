@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import "tailwindcss/tailwind.css"; // Import Tailwind CSS
 import { useRouter } from "next/router";
+import { Tooltip } from "react-tooltip";
+import { AiFillQuestionCircle } from "react-icons/ai";
 
 const Register = () => {
   const router = useRouter();
@@ -94,7 +96,7 @@ const Register = () => {
         formData
       );
       console.log("response", response);
-      router.push("/");
+      router.push("/portfolio");
       return response;
     } catch (error) {
       console.log(error);
@@ -105,7 +107,7 @@ const Register = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-semibold mb-4">Register</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-600">Register</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-600 text-sm font-medium">
@@ -116,7 +118,7 @@ const Register = () => {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full border rounded p-2"
+              className="w-full border rounded p-2 text-gray-600"
             />
             {usernameError && (
               <p className="text-red-500 text-sm">{usernameError}</p>
@@ -131,21 +133,32 @@ const Register = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full border rounded p-2"
+              className="w-full border rounded p-2 text-gray-600"
             />
             {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-600 text-sm font-medium">
-              Password
-            </label>
+          <div className="ho">
+            <div>
+              <label className="block text-gray-600 text-sm font-medium">
+                Password{" "}
+                <span
+                  data-tooltip-id="test"
+                  data-tooltip-html="Minimum Requirements:<br/><ul><li>10 characters</li><li>1 
+                  uppercase letter</li><li>1 lowercase letter</li><li>1 special character</li><li>1 number</li></ul>"
+                >
+                  <AiFillQuestionCircle className="inline" size={16} />
+                </span>
+              </label>
+              <Tooltip id="test" place="right" effect="solid" />
+            </div>
+
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full border rounded p-2"
+              className="w-full border rounded p-2 text-gray-600"
             />
             {pwdError && <p className="text-red-500 text-sm">{pwdError}</p>}
           </div>
@@ -159,7 +172,7 @@ const Register = () => {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full border rounded p-2"
+              className="w-full border rounded p-2 text-gray-600"
             />
             {confirmPwdError && (
               <p className="text-red-500 text-sm">{confirmPwdError}</p>
