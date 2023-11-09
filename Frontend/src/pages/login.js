@@ -24,10 +24,8 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle registration logic here
-    // console.log(formData);
-    const { password, confirmPassword } = formData;
-    const errors = {};
+    // Handle login logic here
+    const { username, password } = formData;
 
     try {
       console.log("try");
@@ -36,7 +34,7 @@ const Login = () => {
         formData
       );
       console.log("response", response);
-      router.push("/");
+      router.push("/portfolio");
       return response;
     } catch (error) {
       console.log(error);

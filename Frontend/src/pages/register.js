@@ -92,7 +92,7 @@ const Register = () => {
     try {
       console.log("try");
       const response = await axios.post(
-        "http://localhost:5000/register",
+        "http://localhost:5000/create_user",
         formData
       );
       console.log("response", response);
