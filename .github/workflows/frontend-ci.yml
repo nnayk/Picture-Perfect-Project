@@ -15,4 +15,4 @@ jobs:
       - name: Install dependencies
         uses: actions/checkout@v4
       - run: npm install
-      - run: next lint
+      - run: npm run lint
