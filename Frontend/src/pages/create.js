@@ -65,7 +65,7 @@ export default function Home() {
 
       {url && isImageAccepted === null && (
         <div className="mt-8">
-          <Image
+          <img
             className="rounded-lg shadow"
             src={url}
             alt="Generated from input"
