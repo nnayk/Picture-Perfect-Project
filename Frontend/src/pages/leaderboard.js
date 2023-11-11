@@ -1,6 +1,6 @@
 // src/pages/leaderboard.js
 
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function Leaderboard() {
   return (
@@ -9,7 +9,9 @@ export default function Leaderboard() {
         <Link href="/portfolio">Portfolio</Link>
         <Link href="/vote">Vote</Link>
         <Link href="/leaderboard">Leaderboard</Link>
-        <button className="bg-blue-500 text-white py-1 px-3 rounded">Sign Out</button>
+        <button className="bg-blue-500 text-white py-1 px-3 rounded">
+          Sign Out
+        </button>
       </nav>
       <h1 className="text-2xl mb-4">Leaderboard</h1>
       <table className="w-full border">
@@ -19,9 +21,7 @@ export default function Leaderboard() {
             <th className="border p-2">Rank</th>
           </tr>
         </thead>
-        <tbody>
-          {/* You can map through your data here */}
-        </tbody>
+        <tbody>{/* You can map through your data here */}</tbody>
       </table>
     </div>
   );
