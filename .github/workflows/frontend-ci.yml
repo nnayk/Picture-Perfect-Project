@@ -7,8 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: 18.8
+        node-version: [16.x]
     steps:
-      - name: Checkout Repository
-          uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: actions/checkout@v4
       - run: npm install
+        working-directory: Frontend
