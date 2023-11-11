@@ -1,10 +1,14 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: Frontend CI
 on:
   push:
     branches: [main]
 jobs:
-  Explore-GitHub-Actions:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: 18.8
     steps:
-      - run: next lint
+      - name: Checkout Repository
+          uses: actions/checkout@v4
+      - run: npm install
