@@ -1,5 +1,3 @@
-// src/pages/leaderboard.js
-
 import Link from "next/link";
 
 export default function Leaderboard() {
