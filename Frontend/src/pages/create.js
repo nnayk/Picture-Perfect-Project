@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 
 export default function Home() {
   const [text, setText] = useState("");
@@ -65,12 +66,14 @@ export default function Home() {
 
       {url && isImageAccepted === null && (
         <div className="mt-8">
-          <img
-            className="rounded-lg shadow"
+          <Image
+            loader={() => url}
             src={url}
             alt="Generated from input"
+            width={500}
+            height={500}
           />
-          <div className="mt-4 flex gap-4">
+          <div className="mt-4 flex justify-center gap-4">
             <button
               onClick={handleAccept}
               className="bg-green-500 text-white p-2 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
