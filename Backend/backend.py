@@ -18,7 +18,6 @@ DB_ACCESS_URL = (
     "http://127.0.0.1:5001"  # This is where db_access.py is running.
 )
 
-
 @app.route("/submit", methods=["POST"])
 def submit():
     data = request.get_json()
