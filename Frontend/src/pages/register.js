@@ -46,7 +46,6 @@ const Register = () => {
   };
 
   /* Username validation function */
-  // TODO: check that username is unique
   const isValidUsername = (username) => {
     return username.length > 0;
   };
