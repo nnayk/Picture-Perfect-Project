@@ -18,7 +18,6 @@ app = Flask(__name__)
 # MongoDB connection
 connect(db="dbPicturePerfect", host="localhost", port=27017)
 
-
 class User(Document):
     username = StringField(required=True, unique=True)
     name = StringField(required=True)
