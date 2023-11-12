@@ -4,6 +4,7 @@ import "tailwindcss/tailwind.css"; // Import Tailwind CSS
 import { useRouter } from "next/router";
 import { Tooltip } from "react-tooltip";
 import { AiFillQuestionCircle } from "react-icons/ai";
+import Link from "next/link";
 
 const Register = () => {
   const router = useRouter();
@@ -187,9 +188,9 @@ const Register = () => {
           </button>
           <p className="text-gray-600 text-sm">
             Already have an account?{" "}
-            <a href="/login" className="text-blue-500 hover:underline">
+            <Link href="/login" className="text-blue-500 hover:underline">
               Log in
-            </a>
+            </Link>
           </p>
         </form>
       </div>

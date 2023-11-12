@@ -4,6 +4,7 @@ import axios from "axios";
 // pages/register.js
 import "tailwindcss/tailwind.css"; // Import Tailwind CSS
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const Login = () => {
   const router = useRouter();
@@ -81,10 +82,10 @@ const Login = () => {
             Login
           </button>
           <p className="text-gray-600 text-sm">
-            Don't have an account yet?{" "}
-            <a href="/register" className="text-blue-500 hover:underline">
+            Don&apos;t have an account yet?{" "}
+            <Link href="/register" className="text-blue-500 hover:underline">
               Sign up!
-            </a>
+            </Link>
           </p>
         </form>
       </div>
