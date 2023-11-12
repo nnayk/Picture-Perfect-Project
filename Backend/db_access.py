@@ -13,7 +13,6 @@ from werkzeug.security import check_password_hash
 import secrets
 from mongoengine.errors import DoesNotExist
 
-
 app = Flask(__name__)
 
 # MongoDB connection
