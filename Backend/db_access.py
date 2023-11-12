@@ -43,7 +43,7 @@ class Image(Document):
 @app.route("/create_user", methods=["POST"])
 def create_user():
     data = json.loads(request.data.decode("utf-8"))
-    print(data)
+    print(f"data = {data}")
     user = User(
         username=data["username"],
         encrypted_password=data["password"],
