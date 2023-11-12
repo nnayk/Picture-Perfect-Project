@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, jsonify
 import requests
 from flask_cors import CORS, cross_origin
@@ -42,18 +43,23 @@ def register():
 
 @app.route("/create_user", methods=["POST"])
 def create_user():
-    #print("BACKEND")
-    data = request.get_json()
+    # print("BACKEND")
+    data = json.loads(request.data.decode("utf-8"))
     username = data["username"]
     plain_text_password = data["password"]
-    name = data["name"]
+    name = data["email"]
 
     # Hash the password
-    hashed_password = generate_password_hash(plain_text_password, method='sha256')
+    hashed_password = generate_password_hash(
+        plain_text_password, method="sha256"
+    )
 
     # Prepare the user data with the hashed password
-    user_data = {"username": username, "password": hashed_password, "name": name}
-
+    user_data = {
+        "username": username,
+        "password": hashed_password,
+        "name": name,
+    }
     # Send the user data with the hashed password to the database access layer
     response = requests.post(f"{DB_ACCESS_URL}/create_user", json=user_data)
 
@@ -69,8 +75,6 @@ def create_user():
     else:
         print("Failed to create user!")
         return jsonify({"message": "Failed to create user!!"})
-
-
 
 
 if __name__ == "__main__":
