@@ -68,7 +68,6 @@ const Register = () => {
     }
     if (!isValidEmail(email)) {
       setEmailError("Please enter a valid email address.");
-      console.log("2");
       return; // Prevent form submission
     } else {
       setEmailError("");
