@@ -1,4 +1,4 @@
-name: Frontend CI
+name: Backend CI
 on:
   push:
     branches: [main]
@@ -10,9 +10,6 @@ jobs:
     defaults:
       run:
         working-directory: Backend
-    strategy:
-      matrix:
-        node-version: [16.x]
     steps:
       - name: Install dependencies
         uses: None
