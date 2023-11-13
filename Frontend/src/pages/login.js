@@ -23,7 +23,7 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     // Handle login logic here
     const { username, password } = formData;
@@ -35,6 +35,10 @@ const Login = () => {
         formData
       );
       console.log("response", response);
+      // Assuming the token is sent in the response as 'access_token'
+      const { access_token } = response.data;
+      // Store the token securely, e.g., in local storage
+      localStorage.setItem("token", access_token);
       router.push("/portfolio");
       return response;
     } catch (error) {
@@ -47,7 +51,7 @@ const Login = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-96">
         <h2 className="text-2xl font-semibold mb-4 text-gray-600 ">Login</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogin}>
           <div className="mb-4">
             <label className="block text-gray-600 text-sm font-medium">
               Username
@@ -77,7 +81,7 @@ const Login = () => {
           <button
             type="submit"
             className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 transition duration-200 mb-4"
-            onClick={handleSubmit}
+            onClick={handleLogin}
           >
             Login
           </button>

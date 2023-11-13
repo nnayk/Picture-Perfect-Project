@@ -1,6 +1,7 @@
 // src/pages/portfolio.js
 
 import Link from "next/link";
+import { isAuthenticated } from ".//auth.js";
 
 export default function Portfolio() {
   return (
@@ -19,4 +20,23 @@ export default function Portfolio() {
       </div>
     </div>
   );
+}
+
+// Use getServerSideProps to check authentication before rendering the page
+export async function getServerSideProps(context) {
+  if (!isAuthenticated()) {
+    console.log("failed login")
+    // If the user is not authenticated, redirect them to the login page
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  // If the user is authenticated, render the Portfolio page
+  return {
+    props: {}, // Will be passed to the page component as props
+  };
 }

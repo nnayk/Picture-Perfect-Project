@@ -1,11 +1,12 @@
 #test comment to refresh ci
 from flask import Flask, request, jsonify
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+
 import requests
 from flask_cors import CORS, cross_origin
 
 from mongoengine import connect, Document, StringField, DoesNotExist
-from werkzeug.security import generate_password_hash
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash,check_password_hash
 import secrets  # For generating a session key
 
 from datetime import datetime
@@ -17,6 +18,10 @@ from db_access import Image
 app = Flask(__name__)
 cors = CORS(app)
 app.config["CORS_HEADERS"] = "Content-Type"
+
+app.config['JWT_SECRET_KEY'] = secrets.SystemRandom
+jwt = JWTManager(app)
+
 
 DB_ACCESS_URL = (
     "http://127.0.0.1:5001"  # This is where db_access.py is running.
@@ -72,13 +77,9 @@ def login():
         
         # Verify password (assuming passwords are hashed before storing)
         if check_password_hash(user.encrypted_password, data['password']):
-            # Generate session key/token
-            session_key = secrets.token_hex(16)  # This is just a placeholder for an actual session key/token
-            # You would store this session key in a session store or database
-            # with a reference to the user and a valid time period
-            
-            # Return success response with session key
-            return jsonify({"message": "Logged in successfully!", "session_key": session_key}), 200
+            # Generate access token
+            access_token = create_access_token(identity=user.username)
+            return jsonify({"access_token": access_token}), 200
         else:
             # Incorrect password
             return jsonify({"message": "Login failed, incorrect username or password"}), 401
@@ -94,7 +95,7 @@ def login():
 
 
 @app.route("/create_user", methods=["POST"])
-def register():
+def create_user():
     print("received register request")
     print(request, request.data)
     return jsonify({"message": "No endpoint called create_user, perhaps you meant: /register"})
@@ -147,6 +148,12 @@ def register():
         return jsonify({"message": "Failed to create user!!"})
 
 
+@app.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    # Access the identity of the current user with get_jwt_identity
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
 
 
 if __name__ == "__main__":
