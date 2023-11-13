@@ -25,6 +25,7 @@ class User(Document):
         required=True
     )  
     ranking = IntField()
+
     meta = {"collection": "users"}
 
 
@@ -33,7 +34,9 @@ class Image(Document):
     url = StringField(required=True)
     prompt = StringField(required=True)
     votes = IntField(default=0)
+
     meta = {"collection": "images"}
+
 
 @app.route("/create_user", methods=["POST"])
 def create_user():
@@ -61,6 +64,7 @@ def create_user():
             400,
         )
 
+
 @app.route("/create_image", methods=["POST"])
 def create_image():
     data = request.get_json()
@@ -71,6 +75,7 @@ def create_image():
     # Associate the image with the user and save it
     image = Image(creator=creator, prompt=data["prompt"], url=data["url"])
     image.save()
+
     return (
         jsonify(
             {
@@ -80,6 +85,7 @@ def create_image():
         ),
         201,
     )
+
 
 @app.route("/users")
 def get_users():
@@ -94,6 +100,7 @@ def get_users():
             for user in users
         ]
     )
+
 
 @app.route("/images")
 def get_images():
