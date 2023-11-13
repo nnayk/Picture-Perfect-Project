@@ -34,6 +34,38 @@ def submit():
     return jsonify({"message": "Text logged successfully!"})
 
 
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+
+    try:
+        # Authenticate the user
+        user = User.objects.get(username=data['username'])
+        
+        # Verify password (assuming passwords are hashed before storing)
+        if check_password_hash(user.encrypted_password, data['password']):
+            # Generate session key/token
+            session_key = secrets.token_hex(16)  # This is just a placeholder for an actual session key/token
+            # You would store this session key in a session store or database
+            # with a reference to the user and a valid time period
+            
+            # Return success response with session key
+            return jsonify({"message": "Logged in successfully!", "session_key": session_key}), 200
+        else:
+            # Incorrect password
+            return jsonify({"message": "Login failed, incorrect username or password"}), 401
+    except DoesNotExist:
+        # Username does not exist
+        return jsonify({"message": "Login failed, incorrect username or password"}), 401
+    except KeyError:
+        # Username or password not provided
+        return jsonify({"message": "Login failed, must provide username and password"}), 400
+    except Exception as e:
+        # Catch any other errors
+        return jsonify({"message": str(e)}), 500
+
+
+
 @app.route("/register", methods=["POST"])
 def register():
     print("received register request")
