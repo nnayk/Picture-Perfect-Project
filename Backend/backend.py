@@ -7,9 +7,9 @@ from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 import secrets  # For generating a session key
 
-from datetime import datetime 
+from datetime import datetime
 
-from db_access import User 
+from db_access import User
 from db_access import Image
 
 
@@ -26,13 +26,11 @@ DB_ACCESS_URL = (
 @app.route("/store_image", methods=["POST"])
 def store_image():
     data = request.get_json()
-
     # Validate required fields
     required_fields = ["creator", "prompt", "url"]
     for field in required_fields:
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
-
     # Retrieve creator user by user
     try:
         creator = User.objects.get(username=data["creator"])
@@ -40,7 +38,6 @@ def store_image():
         return jsonify({"error": "Creator user does not exist."}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-
     try:
         image = Image(
             creator=creator,
@@ -59,13 +56,7 @@ def store_image():
         return jsonify({"error": str(e)}), 500
     data = request.get_json()
     text = data["text"]
-    # In the future, create obj that stores:
-    #   - Timestamp
-    #   - Prompt
-    #   - Image URL (placeholder till we send prompt to Dalle)
-    #   - Author
-    #   - Votes
-    # For now, we'll just print it.
+
     print(text)
     return jsonify({"message": "Text logged successfully!"})
 
