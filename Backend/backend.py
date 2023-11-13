@@ -1,4 +1,3 @@
-import json
 from flask import Flask, request, jsonify
 import requests
 from flask_cors import CORS, cross_origin
@@ -8,7 +7,11 @@ from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 import secrets  # For generating a session key
 
-from db_access import User
+from datetime import datetime 
+
+from db_access import User 
+from db_access import Image
+
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -19,8 +22,41 @@ DB_ACCESS_URL = (
 )
 
 
+
 @app.route("/submit", methods=["POST"])
 def submit():
+    data = request.get_json()
+
+    # Validate required fields
+    required_fields = ["creator", "prompt", "url"]
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing field: {field}"}), 400
+
+    # Retrieve creator user by user
+    try:
+        creator = User.objects.get(username=data["creator"])
+    except DoesNotExist:
+        return jsonify({"error": "Creator user does not exist."}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+    try:
+        image = Image(
+            creator=creator,
+            prompt=data["prompt"],
+            url=data["url"],
+            # votes default to 0 as defined in the Image class
+            # timestamp can be added if we want to have more variation between similar objects
+        )
+        image.save()
+        return jsonify({
+            "message": "Image submitted successfully!",
+            "image_id": str(image.id),
+            "timestamp": datetime.utcnow()  # if you wish to return the timestamp when the image was stored
+        }), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     data = request.get_json()
     text = data["text"]
     # In the future, create obj that stores:
@@ -70,28 +106,41 @@ def login():
 def register():
     print("received register request")
     print(request, request.data)
-    return jsonify({"message": "Registered successfully!"})
+    return jsonify({"message": "No endpoint called register, perhaps you meant: /create_user"})
 
 
 @app.route("/create_user", methods=["POST"])
 def create_user():
-    # print("BACKEND")
-    data = json.loads(request.data.decode("utf-8"))
+    #print("BACKEND")
+    data = request.get_json()
+
+    # Validate required fields
+    required_fields = ["username", "password", "name", "email"]
+    missing_fields = [field for field in required_fields if field not in data]
+
+    if missing_fields:
+        return jsonify({
+            "message": "Request missing required fields",
+            "missing_fields": missing_fields
+        }), 400
+
+
     username = data["username"]
     plain_text_password = data["password"]
-    name = data["email"]
+    name = data["name"]
+    email = data["email"]
 
     # Hash the password
-    hashed_password = generate_password_hash(
-        plain_text_password, method="sha256"
-    )
+    hashed_password = generate_password_hash(plain_text_password, method='sha256')
 
     # Prepare the user data with the hashed password
     user_data = {
-        "username": username,
-        "password": hashed_password,
-        "name": name,
+        "username": username, 
+        "email": email,
+        "password": hashed_password, 
+        "name": name
     }
+
     # Send the user data with the hashed password to the database access layer
     response = requests.post(f"{DB_ACCESS_URL}/create_user", json=user_data)
 
@@ -107,6 +156,8 @@ def create_user():
     else:
         print("Failed to create user!")
         return jsonify({"message": "Failed to create user!!"})
+
+
 
 
 if __name__ == "__main__":
