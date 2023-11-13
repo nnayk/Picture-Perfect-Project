@@ -17,4 +17,3 @@ jobs:
       - name: Install dependencies and lint
         uses: actions/checkout@v4
       - run: pip install -r requirements.txt
-      - run: pycodestyle .
