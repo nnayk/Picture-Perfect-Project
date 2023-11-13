@@ -25,7 +25,7 @@ class User(Document):
     encrypted_password = StringField(
         required=True
     )  
-    name = StringField(required=True)
+
 
     ranking = IntField()
 
@@ -48,7 +48,6 @@ def create_user():
     user = User(
         username=data["username"],
         encrypted_password=data["password"],
-        name=data["name"],
         email=data["email"]
     )
     try:

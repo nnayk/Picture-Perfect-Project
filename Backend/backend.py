@@ -23,8 +23,8 @@ DB_ACCESS_URL = (
 
 
 
-@app.route("/submit", methods=["POST"])
-def submit():
+@app.route("/store_image", methods=["POST"])
+def store_image():
     data = request.get_json()
 
     # Validate required fields
@@ -101,21 +101,20 @@ def login():
         return jsonify({"message": str(e)}), 500
 
 
-
-@app.route("/register", methods=["POST"])
+@app.route("/create_user", methods=["POST"])
 def register():
     print("received register request")
     print(request, request.data)
-    return jsonify({"message": "No endpoint called register, perhaps you meant: /create_user"})
+    return jsonify({"message": "No endpoint called create_user, perhaps you meant: /register"})
 
 
-@app.route("/create_user", methods=["POST"])
-def create_user():
+@app.route("/register", methods=["POST"])
+def register():
     #print("BACKEND")
     data = request.get_json()
 
     # Validate required fields
-    required_fields = ["username", "password", "name", "email"]
+    required_fields = ["username", "password", "email"]
     missing_fields = [field for field in required_fields if field not in data]
 
     if missing_fields:
@@ -127,7 +126,6 @@ def create_user():
 
     username = data["username"]
     plain_text_password = data["password"]
-    name = data["name"]
     email = data["email"]
 
     # Hash the password
@@ -137,8 +135,7 @@ def create_user():
     user_data = {
         "username": username, 
         "email": email,
-        "password": hashed_password, 
-        "name": name
+        "password": hashed_password
     }
 
     # Send the user data with the hashed password to the database access layer
