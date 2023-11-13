@@ -1,3 +1,4 @@
+#test comment to refresh ci
 from flask import Flask, request, jsonify
 import requests
 from flask_cors import CORS, cross_origin
@@ -56,7 +57,7 @@ def store_image():
         return jsonify({"error": str(e)}), 500
     data = request.get_json()
     text = data["text"]
-
+ 
     print(text)
     return jsonify({"message": "Text logged successfully!"})
 
