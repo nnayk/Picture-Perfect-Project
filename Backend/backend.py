@@ -22,7 +22,17 @@ DB_ACCESS_URL = (
     "http://127.0.0.1:5001"  # This is where db_access.py is running.
 )
 
+@app.route("/generate_image", methods=["POST"])
+def generate_image():
+    data = request.get_json()
+    url = "https://imagegolf.io/api/generate"
+    url_data = {
+        "inputValue": data["prompt"]
+    }
 
+    r = requests.post(url, json=url_data)
+
+    return r.json()
 
 @app.route("/store_image", methods=["POST"])
 def store_image():
@@ -94,7 +104,7 @@ def login():
 
 
 @app.route("/create_user", methods=["POST"])
-def register():
+def create_user():
     print("received register request")
     print(request, request.data)
     return jsonify({"message": "No endpoint called create_user, perhaps you meant: /register"})
@@ -145,8 +155,6 @@ def register():
     else:
         print("Failed to create user!")
         return jsonify({"message": "Failed to create user!!"})
-
-
 
 
 if __name__ == "__main__":
