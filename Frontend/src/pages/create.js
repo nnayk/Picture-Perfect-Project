@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import Image from "next/image";
 
 export default function Home() {
@@ -10,23 +11,16 @@ export default function Home() {
     e.preventDefault();
 
     try {
-      const response = await fetch("/api/generateURL", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          inputValue: text,
-        }),
-      });
+      const response = await axios.post(
+        "http://localhost:5000/generate_image",
+        {"prompt": text}
+      );
 
-      const data = await response.json();
-
-      if (data.url) {
-        setUrl(data.url);
+      if (response.data.output) {
+        setUrl(response.data.output);
         setImageAccepted(null); // Reset the decision state when a new image is fetched
-      } else {
-        console.error("Failed to get URL.");
+      } else if (response.data.error) {
+          console.error(response.data.error);
       }
     } catch (error) {
       console.error("Error:", error);
