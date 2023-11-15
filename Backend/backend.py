@@ -1,4 +1,3 @@
-#test comment to refresh ci
 from flask import Flask, request, jsonify
 import requests
 from flask_cors import CORS, cross_origin
@@ -22,6 +21,7 @@ DB_ACCESS_URL = (
     "http://127.0.0.1:5001"  # This is where db_access.py is running.
 )
 
+
 @app.route("/generate_image", methods=["POST"])
 def generate_image():
     data = request.get_json()
@@ -33,6 +33,7 @@ def generate_image():
     r = requests.post(url, json=url_data)
 
     return r.json()
+
 
 @app.route("/store_image", methods=["POST"])
 def store_image():
@@ -50,24 +51,25 @@ def store_image():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     try:
+        # votes default to 0 as defined in the Image class
+        # timestamp can be added if we want to have more variation
+        # between similar objects
         image = Image(
             creator=creator,
             prompt=data["prompt"],
-            url=data["url"],
-            # votes default to 0 as defined in the Image class
-            # timestamp can be added if we want to have more variation between similar objects
-        )
+            url=data["url"])
         image.save()
         return jsonify({
             "message": "Image submitted successfully!",
             "image_id": str(image.id),
-            "timestamp": datetime.utcnow()  # if you wish to return the timestamp when the image was stored
+            # if you wish to return the timestamp when the image was stored
+            "timestamp": datetime.utcnow()
         }), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     data = request.get_json()
     text = data["text"]
- 
+
     print(text)
     return jsonify({"message": "Text logged successfully!"})
 
@@ -79,25 +81,35 @@ def login():
     try:
         # Authenticate the user
         user = User.objects.get(username=data['username'])
-        
+
         # Verify password (assuming passwords are hashed before storing)
         if check_password_hash(user.encrypted_password, data['password']):
             # Generate session key/token
-            session_key = secrets.token_hex(16)  # This is just a placeholder for an actual session key/token
+            # This is just a placeholder for an actual session key/token
+            session_key = secrets.token_hex(16)
             # You would store this session key in a session store or database
             # with a reference to the user and a valid time period
-            
+
             # Return success response with session key
-            return jsonify({"message": "Logged in successfully!", "session_key": session_key}), 200
+            return jsonify({
+                    "message": "Logged in successfully!",
+                    "session_key": session_key
+                }), 200
         else:
             # Incorrect password
-            return jsonify({"message": "Login failed, incorrect username or password"}), 401
+            return jsonify({
+                    "message": "Login failed, incorrect username or password"
+                }), 401
     except DoesNotExist:
         # Username does not exist
-        return jsonify({"message": "Login failed, incorrect username or password"}), 401
+        return jsonify({
+                "message": "Login failed, incorrect username or password"
+            }), 401
     except KeyError:
         # Username or password not provided
-        return jsonify({"message": "Login failed, must provide username and password"}), 400
+        return jsonify({
+                "message": "Login failed, must provide username and password"
+            }), 400
     except Exception as e:
         # Catch any other errors
         return jsonify({"message": str(e)}), 500
@@ -107,12 +119,12 @@ def login():
 def create_user():
     print("received register request")
     print(request, request.data)
-    return jsonify({"message": "No endpoint called create_user, perhaps you meant: /register"})
+    return jsonify({"""message": "No endpoint called create_user,
+            perhaps you meant: /register"""})
 
 
 @app.route("/register", methods=["POST"])
 def register():
-    #print("BACKEND")
     data = request.get_json()
 
     # Validate required fields
@@ -125,17 +137,17 @@ def register():
             "missing_fields": missing_fields
         }), 400
 
-
     username = data["username"]
     plain_text_password = data["password"]
     email = data["email"]
 
     # Hash the password
-    hashed_password = generate_password_hash(plain_text_password, method='sha256')
+    hashed_password = generate_password_hash(plain_text_password,
+                                             method='sha256')
 
     # Prepare the user data with the hashed password
     user_data = {
-        "username": username, 
+        "username": username,
         "email": email,
         "password": hashed_password
     }
