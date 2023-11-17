@@ -5,6 +5,7 @@ import axios from "axios";
 import "tailwindcss/tailwind.css"; // Import Tailwind CSS
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const router = useRouter();
@@ -37,12 +38,13 @@ const Login = () => {
       console.log("response", response);
       // Assuming the token is sent in the response as 'access_token'
       const { access_token } = response.data;
-      // Store the token securely, e.g., in local storage
-      localStorage.setItem("token", access_token);
+      // Store the token in cookie
+      Cookies.set("token", access_token, { expires: 7, path: "/" });
       router.push("/portfolio");
       return response;
     } catch (error) {
       console.log(error);
+      console.log("failed while loging in");
       return false;
     }
   };

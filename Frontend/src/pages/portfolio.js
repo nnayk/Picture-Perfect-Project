@@ -24,7 +24,7 @@ export default function Portfolio() {
 
 // Use getServerSideProps to check authentication before rendering the page
 export async function getServerSideProps(context) {
-  if (!isAuthenticated()) {
+  if (!isAuthenticated(context.req)) {
     console.log("failed login")
     // If the user is not authenticated, redirect them to the login page
     return {
