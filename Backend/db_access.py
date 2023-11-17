@@ -12,11 +12,16 @@ import json
 from werkzeug.security import check_password_hash
 import secrets
 from mongoengine.errors import DoesNotExist
+from dotenv import load_dotenv
+load_dotenv()
+
+import os
 
 app = Flask(__name__)
 
 # MongoDB connection
-connect(db="dbPicturePerfect", host="localhost", port=27017)
+mongo_uri = os.environ.get("MONGO_URI")
+connect(host=mongo_uri)
 
 
 class User(Document):
