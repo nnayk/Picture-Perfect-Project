@@ -18,12 +18,13 @@ app = Flask(__name__)
 # MongoDB connection
 connect(db="dbPicturePerfect", host="localhost", port=27017)
 
+
 class User(Document):
     username = StringField(required=True, unique=True)
     email = StringField(required=True)
     encrypted_password = StringField(
         required=True
-    )  
+    )
     ranking = IntField()
 
     meta = {"collection": "users"}
@@ -41,7 +42,7 @@ class Image(Document):
 @app.route("/create_user", methods=["POST"])
 def create_user():
     data = json.loads(request.data.decode("utf-8"))
-    #print(f"data = {data}")
+    # print(f"data = {data}")
     user = User(
         username=data["username"],
         encrypted_password=data["password"],
@@ -60,7 +61,8 @@ def create_user():
         )
     except NotUniqueError:
         return (
-            jsonify({"error": "Username or email already exists. Choose another."}),
+            jsonify({"error": "Username or email already exists. \
+                     Choose another."}),
             400,
         )
 
