@@ -13,6 +13,7 @@ from werkzeug.security import check_password_hash
 import secrets
 from mongoengine.errors import DoesNotExist
 from dotenv import load_dotenv
+
 load_dotenv()
 
 import os
@@ -27,9 +28,7 @@ connect(host=mongo_uri)
 class User(Document):
     username = StringField(required=True, unique=True)
     email = StringField(required=True)
-    encrypted_password = StringField(
-        required=True
-    )
+    encrypted_password = StringField(required=True)
     ranking = IntField()
 
     meta = {"collection": "users"}
@@ -44,13 +43,12 @@ class Image(Document):
     meta = {"collection": "images"}
 
 
-@app.route("/create_user", methods=["POST"])
-def create_user():
-    data = json.loads(request.data.decode("utf-8"))
+@app.route("/create_test_user", methods=["POST"])
+def create_test_user():
     user = User(
-        username=data["username"],
-        encrypted_password=data["password"],
-        email=data["email"]
+        username="bob",
+        encrypted_password="pwd",
+        email="bob@gmail.com",
     )
     try:
         user.save()
@@ -65,8 +63,43 @@ def create_user():
         )
     except NotUniqueError:
         return (
-            jsonify({"error": """Username or email already exists.
-                                 Choose another."""}),
+            jsonify(
+                {
+                    "error": """Username or email already exists.
+                                 Choose another."""
+                }
+            ),
+            400,
+        )
+
+
+@app.route("/create_user", methods=["POST"])
+def create_user():
+    data = json.loads(request.data.decode("utf-8"))
+    user = User(
+        username=data["username"],
+        encrypted_password=data["password"],
+        email=data["email"],
+    )
+    try:
+        user.save()
+        return (
+            jsonify(
+                {
+                    "message": "User created successfully!",
+                    "user_id": str(user.id),
+                }
+            ),
+            201,
+        )
+    except NotUniqueError:
+        return (
+            jsonify(
+                {
+                    "error": """Username or email already exists.
+                                 Choose another."""
+                }
+            ),
             400,
         )
 
