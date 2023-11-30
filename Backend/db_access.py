@@ -137,7 +137,7 @@ def get_users():
                                  Choose another."""
             }
         ),
-        400,
+        401,
     )
 
 

@@ -184,6 +184,10 @@ def register():
 
     # Handle the response from the database access layer
     if response.status_code == 201:
+        return (
+            jsonify({"message": "Duplicate username, please choose another!"}),
+            400,
+        )
         print("User created successfully!")
         return jsonify({"message": "User logged successfully!"})
     elif response.status_code == 400:

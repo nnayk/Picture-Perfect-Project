@@ -94,14 +94,19 @@ const Register = () => {
         "http://localhost:5000/register",
         formData
       );
-      console.log(`response = ${response}`);
-      if (response.status >= 400) {
-        console.log(`bad something, response=${response}`);
-      }
+      console.log(`responsey = ${response}`);
       console.log("response", response);
       router.push("/portfolio");
       return response;
     } catch (error) {
+      console.log("err", error);
+      if (error != null) {
+        if (error.response.data.message.toLowerCase().includes("username")) {
+          setUsernameError("Username already taken.");
+        } else {
+          setEmailError("Email already taken.");
+        }
+      }
       console.log(error);
       return false;
     }
