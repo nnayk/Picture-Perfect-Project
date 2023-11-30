@@ -92,15 +92,14 @@ def create_user():
             ),
             201,
         )
-    except NotUniqueError:
+    except:
         return (
             jsonify(
                 {
-                    "error": """Username or email already exists.
-                                 Choose another."""
+                    "message": "Internal server error",
                 }
             ),
-            400,
+            500,
         )
 
 
