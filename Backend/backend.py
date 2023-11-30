@@ -175,25 +175,16 @@ def register():
         "email": email,
         "password": hashed_password,
     }
-
-    d = requests.get(f"{DB_ACCESS_URL}/users", json=user_data)
-    print(f"d={d}")
-
     # Send the user data with the hashed password to the database access layer
     response = requests.post(f"{DB_ACCESS_URL}/create_user", json=user_data)
 
     # Handle the response from the database access layer
     if response.status_code == 201:
-        return (
-            jsonify({"message": "Duplicate username, please choose another!"}),
-            400,
-        )
         print("User created successfully!")
         return jsonify({"message": "User logged successfully!"})
     elif response.status_code == 400:
-        print("Duplicate username, please choose another")
         return (
-            jsonify({"message": "Duplicate username, please choose another!"}),
+            jsonify({"message": response.message}),
             400,
         )
     else:
