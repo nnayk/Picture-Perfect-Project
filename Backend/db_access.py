@@ -126,18 +126,18 @@ def create_image():
     )
 
 
-@app.route("/users")
+@app.route("/users", methods=["GET"])
 def get_users():
-    users = User.objects.all()
-    return jsonify(
-        [
+    data = json.loads(request.data.decode("utf-8"))
+    print(f"data = {data}")
+    return (
+        jsonify(
             {
-                "username": user.username,
-                "name": user.name,
-                "user_id": str(user.id),
+                "error": """Username or email already exists.
+                                 Choose another."""
             }
-            for user in users
-        ]
+        ),
+        400,
     )
 
 

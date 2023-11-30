@@ -91,9 +91,13 @@ const Register = () => {
     try {
       console.log("try");
       const response = await axios.post(
-        "http://localhost:5000/create_user",
+        "http://localhost:5000/register",
         formData
       );
+      console.log(`response = ${response}`);
+      if (response.status >= 400) {
+        console.log(`bad something, response=${response}`);
+      }
       console.log("response", response);
       router.push("/portfolio");
       return response;
