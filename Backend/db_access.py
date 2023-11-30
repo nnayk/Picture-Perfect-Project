@@ -128,16 +128,35 @@ def create_image():
 @app.route("/users", methods=["GET"])
 def get_users():
     data = json.loads(request.data.decode("utf-8"))
-    print(f"data = {data}")
-    return (
-        jsonify(
-            {
-                "error": """Username or email already exists.
+    user = User.objects(username=data["username"]).first()
+    print(f"user={user}")
+    if user:
+        return (
+            jsonify(
+                {
+                    "error": """Username already exists.
                                  Choose another."""
-            }
-        ),
-        401,
-    )
+                }
+            ),
+            401,
+        )
+    user = User.objects(email=data["email"]).first()
+    print(f"user={user}")
+    if user:
+        return (
+            jsonify(
+                {
+                    "error": """Email already exists.
+                                 Choose another."""
+                }
+            ),
+            401,
+        )
+    if user is None:
+        return (
+            jsonify({"error": """User credentials are unique"""}),
+            200,
+        )
 
 
 @app.route("/images")

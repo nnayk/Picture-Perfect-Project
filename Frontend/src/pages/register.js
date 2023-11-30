@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { Tooltip } from "react-tooltip";
 import { AiFillQuestionCircle } from "react-icons/ai";
 import Link from "next/link";
+import Error from "next/error";
 
 const Register = () => {
   const router = useRouter();
@@ -94,8 +95,6 @@ const Register = () => {
         "http://localhost:5000/register",
         formData
       );
-      console.log(`responsey = ${response}`);
-      console.log("response", response);
       router.push("/portfolio");
       return response;
     } catch (error) {
@@ -103,9 +102,11 @@ const Register = () => {
       if (error != null) {
         if (error.response.data.message.toLowerCase().includes("username")) {
           setUsernameError("Username already taken.");
-        } else {
+        } else if (
+          error.response.data.message.toLowerCase().includes("email")
+        ) {
           setEmailError("Email already taken.");
-        }
+        } else throw new Error("Unknown registration error");
       }
       console.log(error);
       return false;
