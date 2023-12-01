@@ -95,7 +95,7 @@ const Register = () => {
         "http://localhost:5000/register",
         formData
       );
-      router.push("/portfolio");
+      router.push("/login");
       return response;
     } catch (error) {
       console.log("err", error);
