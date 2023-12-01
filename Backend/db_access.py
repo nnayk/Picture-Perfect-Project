@@ -92,15 +92,14 @@ def create_user():
             ),
             201,
         )
-    except NotUniqueError:
+    except:
         return (
             jsonify(
                 {
-                    "error": """Username or email already exists.
-                                 Choose another."""
+                    "message": "Internal server error",
                 }
             ),
-            400,
+            500,
         )
 
 
@@ -126,19 +125,38 @@ def create_image():
     )
 
 
-@app.route("/users")
+@app.route("/users", methods=["GET"])
 def get_users():
-    users = User.objects.all()
-    return jsonify(
-        [
-            {
-                "username": user.username,
-                "name": user.name,
-                "user_id": str(user.id),
-            }
-            for user in users
-        ]
-    )
+    data = json.loads(request.data.decode("utf-8"))
+    user = User.objects(username=data["username"]).first()
+    print(f"user={user}")
+    if user:
+        return (
+            jsonify(
+                {
+                    "error": """Username already exists.
+                                 Choose another."""
+                }
+            ),
+            401,
+        )
+    user = User.objects(email=data["email"]).first()
+    print(f"user={user}")
+    if user:
+        return (
+            jsonify(
+                {
+                    "error": """Email already exists.
+                                 Choose another."""
+                }
+            ),
+            401,
+        )
+    if user is None:
+        return (
+            jsonify({"error": """User credentials are unique"""}),
+            200,
+        )
 
 
 @app.route("/images")

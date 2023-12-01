@@ -82,7 +82,6 @@ def login():
     try:
         # Authenticate the user
         user = User.objects.get(username=data["username"])
-
         # Verify password (assuming passwords are hashed before storing)
         if check_password_hash(user.encrypted_password, data["password"]):
             # Generate session key/token
@@ -176,22 +175,22 @@ def register():
         "email": email,
         "password": hashed_password,
     }
-
+    response = requests.get(f"{DB_ACCESS_URL}/users", json=user_data)
+    if response.status_code == 401:
+        print(f"responsey={response.text}")
+        return (
+            jsonify({"message": response.text}),
+            400,
+        )
     # Send the user data with the hashed password to the database access layer
     response = requests.post(f"{DB_ACCESS_URL}/create_user", json=user_data)
-
     # Handle the response from the database access layer
     if response.status_code == 201:
         print("User created successfully!")
         return jsonify({"message": "User logged successfully!"})
-    elif response.status_code == 400:
-        print("Duplicate username, please choose another")
-        return jsonify(
-            {"message": "Duplicate username, please choose another!"}
-        )
     else:
         print("Failed to create user!")
-        return jsonify({"message": "Failed to create user!!"})
+        return jsonify({"message": "Failed to create user!!"}), 500
 
 
 if __name__ == "__main__":
