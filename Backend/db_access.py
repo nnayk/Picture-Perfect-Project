@@ -159,6 +159,23 @@ def get_images():
         ]
     )
 
+@app.route("/user_images/<username>", methods=["GET"])
+def get_user_images(username):
+    try:
+        user = User.objects.get(username=username)
+        images = Image.objects(creator=user)
+        return jsonify([{
+            "creator_id": str(image.creator.id),
+            "prompt": image.prompt,
+            "url": image.url,
+            "votes": image.votes,
+            "image_id": str(image.id)
+        } for image in images]), 200
+    except DoesNotExist:
+        return jsonify({"error": "User not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500 
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001, debug=True)

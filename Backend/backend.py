@@ -3,6 +3,8 @@ from flask import Flask, request, jsonify
 import requests
 from flask_cors import CORS, cross_origin
 
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+
 from mongoengine import connect, Document, StringField, DoesNotExist
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
@@ -17,6 +19,9 @@ from db_access import Image
 app = Flask(__name__)
 cors = CORS(app)
 app.config["CORS_HEADERS"] = "Content-Type"
+
+app.config['JWT_SECRET_KEY'] = 'eaadc945-ebf7-4836-9505-cff843f5a87'  
+jwt = JWTManager(app)
 
 DB_ACCESS_URL = (  # This is where db_access.py is running.
     "http://127.0.0.1:5001"
@@ -75,6 +80,31 @@ def store_image():
     return jsonify({"message": "Text logged successfully!"})
 
 
+@app.route("/fetch_portfolio", methods=["GET"])
+@jwt_required()
+def fetch_portfolio():
+    # Get the username from the JWT
+    current_user = get_jwt_identity()
+
+    try:
+        # Request to db_access to get user's images
+        response = requests.get(f"{DB_ACCESS_URL}/user_images/{current_user}")
+        
+        if response.status_code == 200:
+            # If images are found, format and send them
+            images = response.json()
+            return jsonify({"images": images}), 200
+        else:
+            # Handle errors or no images found
+            return jsonify({"message": response.json().get('error', 'An error occurred')}), response.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
+
+
+
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -85,22 +115,11 @@ def login():
 
         # Verify password (assuming passwords are hashed before storing)
         if check_password_hash(user.encrypted_password, data["password"]):
-            # Generate session key/token
-            # This is just a placeholder for an actual session key/token
-            session_key = secrets.token_hex(16)
-            # You would store this session key in a session store or database
-            # with a reference to the user and a valid time period
+            # Generate access token
+            access_token = create_access_token(identity=str(user.username), expires_delta=timedelta(days=1))
+            return jsonify({"message": "Logged in successfully!", "access_token": access_token}), 200
 
-            # Return success response with session key
-            return (
-                jsonify(
-                    {
-                        "message": "Logged in successfully!",
-                        "session_key": session_key,
-                    }
-                ),
-                200,
-            )
+            
         else:
             # Incorrect password
             return (
@@ -167,7 +186,7 @@ def register():
 
     # Hash the password
     hashed_password = generate_password_hash(
-        plain_text_password, method="sha256"
+        plain_text_password, method="scrypt" #changed from sha256
     )
 
     # Prepare the user data with the hashed password
