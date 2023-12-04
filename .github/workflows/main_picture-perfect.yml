@@ -69,10 +69,7 @@ jobs:
           ls -la
 
       - name: Unzip artifact for deployment
-        run: |
-          - run: 
-            command: pwd
-            ls -la
+        run:
             unzip release.zip
 
       - name: 'Deploy to Azure Web App'
