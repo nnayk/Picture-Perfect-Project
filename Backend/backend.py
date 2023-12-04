@@ -166,7 +166,7 @@ def register():
 
     # Hash the password
     hashed_password = generate_password_hash(
-        plain_text_password, method="sha256"
+        plain_text_password, method="scrypt"
     )
 
     # Prepare the user data with the hashed password
