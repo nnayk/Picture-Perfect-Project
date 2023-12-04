@@ -61,7 +61,8 @@ def store_image():
                 {
                     "message": "Image submitted successfully!",
                     "image_id": str(image.id),
-                    # if you wish to return the timestamp when the image was stored
+                    # if you wish to return the timestamp when
+                    # the image was stored
                     "timestamp": datetime.utcnow(),
                 }
             ),

@@ -61,8 +61,8 @@ def create_user(data):
         user.save()
         print(f"successfully added user {user.username}")
         return Response("User created successfully!", 201)
-    except:
-        return Response("Internal server error", 500)
+    except Exception as e:
+        return Response(f"Internal server error {e}", 500)
 
 
 def get_user(data):
