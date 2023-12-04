@@ -12,9 +12,10 @@ import json
 from werkzeug.security import check_password_hash
 import secrets
 from mongoengine.errors import DoesNotExist
-from dotenv import load_dotenv
 
-load_dotenv()
+# from dotenv import load_dotenv
+
+# load_dotenv()
 
 import os
 
@@ -83,6 +84,7 @@ def create_user():
     )
     try:
         user.save()
+        print(f"successfully added user {user.username}")
         return (
             jsonify(
                 {
