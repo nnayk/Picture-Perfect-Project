@@ -12,6 +12,7 @@ from datetime import datetime
 
 from db_access import User
 from db_access import Image
+from db_access import get_user, create_user
 
 
 app = Flask(__name__)
@@ -129,18 +130,6 @@ def login():
         return jsonify({"message": str(e)}), 500
 
 
-@app.route("/create_user", methods=["POST"])
-def create_user():
-    print("received register request")
-    print(request, request.data)
-    return jsonify(
-        {
-            """message": "No endpoint called create_user,
-            perhaps you meant: /register"""
-        }
-    )
-
-
 @app.route("/register", methods=["POST"])
 def register():
     data = request.get_json()
@@ -175,15 +164,15 @@ def register():
         "email": email,
         "password": hashed_password,
     }
-    response = requests.get(f"{DB_ACCESS_URL}/users", json=user_data)
+    response = get_user(user_data)
     if response.status_code == 401:
-        print(f"responsey={response.text}")
+        print(f"responsey={response.message}")
         return (
-            jsonify({"message": response.text}),
+            jsonify({"message": response.message}),
             400,
         )
     # Send the user data with the hashed password to the database access layer
-    response = requests.post(f"{DB_ACCESS_URL}/create_user", json=user_data)
+    response = create_user(user_data)
     # Handle the response from the database access layer
     if response.status_code == 201:
         print("User created successfully!")
