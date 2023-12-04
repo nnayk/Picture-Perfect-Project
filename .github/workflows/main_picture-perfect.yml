@@ -65,6 +65,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: python-app
+      
+      - name: test
+        run: |
+          pwd
+          ls -la
 
       - name: Unzip artifact for deployment
         run: |
