@@ -71,3 +71,6 @@ jobs:
 
           # Install dependencies using npm
           npm install
+          pwd
+          ls
+          npm run dev
