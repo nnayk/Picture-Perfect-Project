@@ -67,8 +67,6 @@ jobs:
       - name: Run post-deployment commands
         run: |
           # Navigate to the deployment directory
-          cd $GITHUB_WORKSPACE
-
           # Install dependencies using npm
           npm install
           pwd
