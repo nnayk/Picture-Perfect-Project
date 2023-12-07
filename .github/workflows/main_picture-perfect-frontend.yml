@@ -63,4 +63,11 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_923D789D109A46EC94120B64224F5246 }}
-          post-deploy-command: 'npm install'
+      # Add a separate step to run post-deployment commands
+      - name: Run post-deployment commands
+        run: |
+          # Navigate to the deployment directory
+          cd $GITHUB_WORKSPACE
+
+          # Install dependencies using npm
+          npm install
